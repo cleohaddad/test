@@ -19,6 +19,19 @@ logging.basicConfig(
 
 # Fonction de détection d'anomalies par kNN
 def knn_outlier_detection(data, k=5, threshold=1.5):
+    """
+    Detect anomalies in a dataset using the k-Nearest Neighbors algorithm.
+
+    Args:
+        data (numpy.ndarray): The input dataset of shape (n_samples, n_features).
+        k (int): The number of neighbors to consider.
+        threshold (float): The mean distance threshold for detecting anomalies.
+
+    Returns:
+        tuple:
+            - numpy.ndarray: A boolean array indicating which points are outliers.
+            - numpy.ndarray: The mean distances for all points in the dataset.
+    """
     logging.info(f"Starting kNN outlier detection with k={k} and threshold={threshold}")
     neigh = NearestNeighbors(n_neighbors=k)
     neigh.fit(data)
@@ -37,6 +50,16 @@ def knn_outlier_detection(data, k=5, threshold=1.5):
 
 # Fonction de détection d'anomalies par Isolation Forest
 def isolation_forest_outlier_detection(data, contamination=0.015):
+    """
+    Detect anomalies in a dataset using the Isolation Forest algorithm.
+
+    Args:
+        data (numpy.ndarray): The input dataset of shape (n_samples, n_features).
+        contamination (float): The proportion of anomalies in the dataset.
+
+    Returns:
+        numpy.ndarray: A boolean array indicating which points are outliers.
+    """
     logging.info(f"Starting Isolation Forest with contamination={contamination}")
     isolation_forest = IsolationForest(contamination=contamination, random_state=42)
     predictions = isolation_forest.fit_predict(data)
@@ -49,6 +72,17 @@ def isolation_forest_outlier_detection(data, contamination=0.015):
 
 # Fonction de détection d'anomalies par One-Class SVM
 def one_class_svm_outlier_detection(data, nu=0.015, gamma="scale"):
+    """
+    Detect anomalies in a dataset using the One-Class SVM algorithm.
+
+    Args:
+        data (numpy.ndarray): The input dataset of shape (n_samples, n_features).
+        nu (float): An upper bound on the fraction of training errors and a lower bound of the fraction of support vectors.
+        gamma (str or float): Kernel coefficient for the RBF kernel.
+
+    Returns:
+        numpy.ndarray: A boolean array indicating which points are outliers.
+    """
     logging.info(f"Starting One-Class SVM with nu={nu}, gamma={gamma}")
     oc_svm = OneClassSVM(kernel="rbf", nu=nu, gamma=gamma)
     predictions = oc_svm.fit_predict(data)
@@ -61,6 +95,16 @@ def one_class_svm_outlier_detection(data, nu=0.015, gamma="scale"):
 
 # Fonction de détection d'anomalies par PCA
 def pca_outlier_detection(data, percentile=95):
+    """
+    Detect anomalies in a dataset using Principal Component Analysis (PCA).
+
+    Args:
+        data (numpy.ndarray): The input dataset of shape (n_samples, n_features).
+        percentile (float): The percentile for determining the anomaly threshold based on reconstruction error.
+
+    Returns:
+        numpy.ndarray: A boolean array indicating which points are outliers.
+    """
     logging.info(f"Starting PCA-based outlier detection with percentile={percentile}")
     pca = PCA(n_components=2)
     data_transformed = pca.fit_transform(data)
@@ -80,6 +124,14 @@ def pca_outlier_detection(data, percentile=95):
 
 # Exemple d'exécution et visualisation pour chaque méthode
 def visualize_results(data, outliers, method_name):
+    """
+    Visualize the results of anomaly detection.
+
+    Args:
+        data (numpy.ndarray): The input dataset of shape (n_samples, n_features).
+        outliers (numpy.ndarray): A boolean array indicating which points are outliers.
+        method_name (str): The name of the anomaly detection method.
+    """
     plt.scatter(data[:, 0], data[:, 1], c='blue', label="Normal data")
     plt.scatter(data[outliers][:, 0], data[outliers][:, 1], c='red', label="Anomalies", edgecolor='k')
     plt.legend()
