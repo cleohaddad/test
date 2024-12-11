@@ -21,6 +21,22 @@ from sklearn.datasets import make_blobs
 import numpy as np
 import matplotlib.pyplot as plt
 
+
+#Initialisation du logging
+import logging
+
+# Configuration de base des logs
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.FileHandler("project_logs.log"),  # Écrit les logs dans un fichier
+        logging.StreamHandler()                  # Affiche les logs dans la console
+    ]
+)
+
+
+
 # Création d'un jeu de données avec des clusters et quelques outliers
 X, _ = make_blobs(n_samples=300, centers=3, cluster_std=0.60, random_state=0)
 
@@ -45,6 +61,8 @@ from sklearn.datasets import make_blobs
 from sklearn.neighbors import NearestNeighbors
 import matplotlib.pyplot as plt
 
+
+'''
 # Fonction de détection d'anomalies par kNN
 def knn_outlier_detection(data, k=5, threshold=1.5):
     neigh = NearestNeighbors(n_neighbors=k)
@@ -53,6 +71,28 @@ def knn_outlier_detection(data, k=5, threshold=1.5):
     mean_distances = distances.mean(axis=1)
     outliers = mean_distances > threshold
     return outliers, mean_distances
+
+'''
+
+
+def knn_outlier_detection(data, k=5, threshold=1.5):
+    logging.info(f"Starting kNN outlier detection with k={k} and threshold={threshold}")
+    neigh = NearestNeighbors(n_neighbors=k)
+    neigh.fit(data)
+    logging.debug("kNN model trained")
+
+    distances, _ = neigh.kneighbors(data)
+    logging.debug(f"Distances calculated: {distances}")
+
+    mean_distances = distances.mean(axis=1)
+    logging.debug(f"Mean distances: {mean_distances}")
+
+    outliers = mean_distances > threshold
+    logging.info(f"Number of outliers detected: {np.sum(outliers)}")
+
+    return outliers, mean_distances
+
+
 
 # Génération d'un jeu de données synthétique avec make_blobs
 data, _ = make_blobs(n_samples=300, centers=3, cluster_std=1.0, random_state=42)
