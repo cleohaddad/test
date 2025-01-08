@@ -1,0 +1,33 @@
+name: Code Analysis
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install linters
+        run: |
+          pip install flake8 bandit detect-secrets
+
+      - name: Run flake8
+        run: flake8 NewPI.py
+
+      - name: Run Bandit
+        run: bandit -r .
+
+      - name: Run Detect-Secrets
+        run: detect-secrets scan .
